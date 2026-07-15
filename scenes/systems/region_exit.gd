@@ -5,6 +5,7 @@ extends Area2D
 @export var target_region: String = ""
 @export var target_spawn: String = "default"
 @export var requires_unlocked: bool = true
+@export var size: Vector2 = Vector2(48, 96)
 
 var _triggered: bool = false
 
@@ -15,6 +16,19 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	monitoring = true
 	monitorable = false
+	_apply_size()
+
+
+func _apply_size() -> void:
+	var shape := RectangleShape2D.new()
+	shape.size = size
+	$CollisionShape2D.shape = shape
+	var hint: ColorRect = get_node_or_null("Hint")
+	if hint:
+		hint.offset_left = -size.x * 0.5
+		hint.offset_right = size.x * 0.5
+		hint.offset_top = -size.y * 0.5
+		hint.offset_bottom = size.y * 0.5
 
 
 func _on_body_entered(body: Node2D) -> void:

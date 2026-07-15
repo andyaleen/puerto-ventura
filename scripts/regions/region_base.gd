@@ -5,13 +5,15 @@ extends Node2D
 
 @export var region_id: String = ""
 @export var ground_color: Color = Color(0.45, 0.75, 0.55, 1)
+@export var map_size_tiles: Vector2i = Vector2i(80, 45)
+@export var tile_size: int = 16
 
 const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const HUD_SCENE := preload("res://scenes/systems/region_hud.tscn")
 
-@onready var _ground: ColorRect = $Ground
-@onready var _spawns: Node2D = $Spawns
-@onready var _world_bounds: StaticBody2D = $WorldBounds
+@onready var _ground: ColorRect = get_node_or_null("Ground")
+@onready var _spawns: Node2D = get_node_or_null("Spawns")
+@onready var _world_bounds: StaticBody2D = get_node_or_null("WorldBounds")
 
 
 func _ready() -> void:
@@ -24,6 +26,10 @@ func _ready() -> void:
 		GameState.current_region_id = region_id
 
 
+func map_pixel_size() -> Vector2:
+	return Vector2(map_size_tiles) * float(tile_size)
+
+
 func _spawn_player() -> void:
 	var existing := get_tree().get_first_node_in_group("player")
 	if existing:
@@ -32,13 +38,25 @@ func _spawn_player() -> void:
 	var player := PLAYER_SCENE.instantiate()
 	add_child(player)
 	player.global_position = _resolve_spawn_position(GameState.pending_spawn_id)
+	_configure_camera(player)
 	# Clear consumed spawn so accidental re-enters use default.
 	GameState.pending_spawn_id = "default"
 
 
+func _configure_camera(player: Node) -> void:
+	var camera: Camera2D = player.get_node_or_null("Camera2D")
+	if camera == null:
+		return
+	var size := map_pixel_size()
+	camera.limit_left = 0
+	camera.limit_top = 0
+	camera.limit_right = int(size.x)
+	camera.limit_bottom = int(size.y)
+
+
 func _resolve_spawn_position(spawn_id: String) -> Vector2:
 	if _spawns == null:
-		return Vector2(640, 360)
+		return map_pixel_size() * 0.5
 
 	var exact := _spawns.get_node_or_null(spawn_id)
 	if exact is Node2D:
@@ -48,7 +66,7 @@ func _resolve_spawn_position(spawn_id: String) -> Vector2:
 	if fallback is Node2D:
 		return (fallback as Node2D).global_position
 
-	return Vector2(640, 360)
+	return map_pixel_size() * 0.5
 
 
 func _spawn_hud() -> void:
@@ -61,15 +79,16 @@ func _spawn_hud() -> void:
 
 
 func _ensure_bounds() -> void:
-	# Soft invisible walls so the player stays inside the prototype playfield.
+	# Soft invisible walls so the player stays inside the playfield edges.
 	if _world_bounds == null:
 		return
 	for child in _world_bounds.get_children():
 		child.queue_free()
 
 	var thickness := 40.0
-	var width := 1280.0
-	var height := 720.0
+	var size := map_pixel_size()
+	var width := size.x
+	var height := size.y
 	_add_wall(Vector2(width * 0.5, -thickness * 0.5), Vector2(width + thickness * 2.0, thickness))
 	_add_wall(Vector2(width * 0.5, height + thickness * 0.5), Vector2(width + thickness * 2.0, thickness))
 	_add_wall(Vector2(-thickness * 0.5, height * 0.5), Vector2(thickness, height + thickness * 2.0))

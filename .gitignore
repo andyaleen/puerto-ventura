@@ -2,9 +2,8 @@
 .godot/
 *.translation
 
-# Imported assets
+# Imported assets (Godot 3 style cache; Godot 4 .import metadata is committed)
 .import/
-*.import
 
 # Native / export
 bin/
