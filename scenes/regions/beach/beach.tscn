@@ -1,0 +1,156 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/regions/region_base.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/systems/region_exit.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/systems/pickup.tscn" id="3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cottage"]
+size = Vector2(120, 80)
+
+[node name="Beach" type="Node2D"]
+script = ExtResource("1")
+region_id = "beach"
+ground_color = Color(0.93, 0.84, 0.55, 1)
+
+[node name="Ground" type="ColorRect" parent="."]
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.93, 0.84, 0.55, 1)
+
+[node name="Ocean" type="ColorRect" parent="."]
+offset_top = 560.0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.18, 0.55, 0.72, 1)
+
+[node name="OceanShallow" type="ColorRect" parent="."]
+offset_top = 520.0
+offset_right = 1280.0
+offset_bottom = 560.0
+color = Color(0.35, 0.75, 0.82, 1)
+
+[node name="Dock" type="ColorRect" parent="."]
+offset_left = 880.0
+offset_top = 500.0
+offset_right = 980.0
+offset_bottom = 620.0
+color = Color(0.55, 0.35, 0.18, 1)
+
+[node name="Cottage" type="ColorRect" parent="."]
+offset_left = 180.0
+offset_top = 280.0
+offset_right = 300.0
+offset_bottom = 360.0
+color = Color(0.86, 0.45, 0.32, 1)
+
+[node name="CottageRoof" type="ColorRect" parent="."]
+offset_left = 170.0
+offset_top = 250.0
+offset_right = 310.0
+offset_bottom = 290.0
+color = Color(0.45, 0.25, 0.18, 1)
+
+[node name="Shipwreck" type="ColorRect" parent="."]
+offset_left = 1040.0
+offset_top = 430.0
+offset_right = 1180.0
+offset_bottom = 500.0
+color = Color(0.4, 0.28, 0.2, 1)
+
+[node name="PalmA" type="ColorRect" parent="."]
+offset_left = 360.0
+offset_top = 300.0
+offset_right = 376.0
+offset_bottom = 380.0
+color = Color(0.4, 0.25, 0.12, 1)
+
+[node name="PalmATop" type="ColorRect" parent="."]
+offset_left = 340.0
+offset_top = 270.0
+offset_right = 396.0
+offset_bottom = 310.0
+color = Color(0.2, 0.6, 0.3, 1)
+
+[node name="PalmB" type="ColorRect" parent="."]
+offset_left = 620.0
+offset_top = 240.0
+offset_right = 636.0
+offset_bottom = 320.0
+color = Color(0.4, 0.25, 0.12, 1)
+
+[node name="PalmBTop" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_top = 210.0
+offset_right = 656.0
+offset_bottom = 250.0
+color = Color(0.2, 0.6, 0.3, 1)
+
+[node name="LabelCottage" type="Label" parent="."]
+offset_left = 176.0
+offset_top = 368.0
+offset_right = 320.0
+offset_bottom = 392.0
+text = "Beach Cottage"
+
+[node name="LabelHint" type="Label" parent="."]
+offset_left = 480.0
+offset_top = 160.0
+offset_right = 900.0
+offset_bottom = 220.0
+theme_override_font_sizes/font_size = 16
+text = "Welcome to Puerto Ventura.
+Walk north into the gold gate to reach Beach Town."
+
+[node name="Props" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CottageCollision" type="CollisionShape2D" parent="Props"]
+position = Vector2(240, 320)
+shape = SubResource("RectangleShape2D_cottage")
+
+[node name="WorldBounds" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Spawns" type="Node2D" parent="."]
+
+[node name="default" type="Marker2D" parent="Spawns"]
+position = Vector2(260, 420)
+
+[node name="from_town" type="Marker2D" parent="Spawns"]
+position = Vector2(640, 120)
+
+[node name="ExitToTown" parent="." instance=ExtResource("2")]
+position = Vector2(640, 40)
+target_region = "beach_town"
+target_spawn = "from_beach"
+
+[node name="ExitLabel" type="Label" parent="ExitToTown"]
+offset_left = -70.0
+offset_top = -110.0
+offset_right = 70.0
+offset_bottom = -86.0
+text = "To Beach Town"
+horizontal_alignment = 1
+
+[node name="ShellPickupA" parent="." instance=ExtResource("3")]
+position = Vector2(420, 500)
+resource_id = "shells"
+amount = 1
+display_name = "Shell"
+
+[node name="ShellPickupB" parent="." instance=ExtResource("3")]
+position = Vector2(760, 540)
+resource_id = "shells"
+amount = 1
+display_name = "Shell"
+
+[node name="DriftwoodPickup" parent="." instance=ExtResource("3")]
+position = Vector2(540, 460)
+resource_id = "wood"
+amount = 2
+display_name = "Driftwood"
+
+[node name="Visual" parent="DriftwoodPickup" index="0"]
+color = Color(0.55, 0.35, 0.18, 1)

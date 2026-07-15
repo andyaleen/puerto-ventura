@@ -1,0 +1,31 @@
+# Godot 4+
+.godot/
+*.translation
+
+# Imported assets
+.import/
+*.import
+
+# Native / export
+bin/
+export/
+*.exe
+*.dll
+*.so
+*.dylib
+*.apk
+*.aab
+*.ipa
+*.app
+*.pck
+*.zip
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+.idea/
+*.tmp
+*.log
