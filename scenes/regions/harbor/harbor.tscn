@@ -1,0 +1,87 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/regions/region_base.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/systems/region_exit.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/regions/harbor/harbor_map.tscn" id="3"]
+
+[node name="Harbor" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1")
+region_id = "harbor"
+map_size_tiles = Vector2i(96, 72)
+
+[node name="HarborMap" parent="." instance=ExtResource("3")]
+
+[node name="WorldBounds" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Spawns" type="Node2D" parent="."]
+
+[node name="default" type="Marker2D" parent="Spawns"]
+position = Vector2(768, 560)
+
+[node name="from_beach" type="Marker2D" parent="Spawns"]
+position = Vector2(160, 560)
+
+[node name="from_city" type="Marker2D" parent="Spawns"]
+position = Vector2(770, 140)
+
+[node name="from_rocky_mining" type="Marker2D" parent="Spawns"]
+position = Vector2(1450, 560)
+
+[node name="RestorationMarkers" type="Node2D" parent="."]
+
+[node name="FountainMarker" type="Marker2D" parent="RestorationMarkers"]
+position = Vector2(768, 560)
+
+[node name="HarborMarker" type="Marker2D" parent="RestorationMarkers"]
+position = Vector2(1120, 880)
+
+[node name="CafeMarker" type="Marker2D" parent="RestorationMarkers"]
+position = Vector2(264, 600)
+
+[node name="FishShopMarker" type="Marker2D" parent="RestorationMarkers"]
+position = Vector2(1128, 768)
+
+[node name="ExitToBeach" parent="." instance=ExtResource("2")]
+position = Vector2(16, 560)
+target_region = "beach"
+target_spawn = "from_harbor"
+size = Vector2(48, 128)
+
+[node name="ExitLabelBeach" type="Label" parent="ExitToBeach"]
+offset_left = -40.0
+offset_top = -72.0
+offset_right = 80.0
+offset_bottom = -48.0
+text = "To Beach"
+horizontal_alignment = 1
+
+[node name="ExitToCity" parent="." instance=ExtResource("2")]
+position = Vector2(770, 16)
+target_region = "city"
+target_spawn = "from_harbor"
+size = Vector2(128, 48)
+
+[node name="ExitLabelCity" type="Label" parent="ExitToCity"]
+offset_left = -50.0
+offset_top = -72.0
+offset_right = 90.0
+offset_bottom = -48.0
+text = "To City"
+horizontal_alignment = 1
+
+[node name="ExitToMining" parent="." instance=ExtResource("2")]
+position = Vector2(1520, 560)
+target_region = "rocky_mining"
+target_spawn = "from_harbor"
+size = Vector2(48, 128)
+
+[node name="ExitLabelMining" type="Label" parent="ExitToMining"]
+offset_left = -70.0
+offset_top = -72.0
+offset_right = 90.0
+offset_bottom = -48.0
+text = "To Mining"
+horizontal_alignment = 1

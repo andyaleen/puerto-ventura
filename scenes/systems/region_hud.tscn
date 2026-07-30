@@ -12,7 +12,7 @@ anchor_right = 1.0
 offset_left = 16.0
 offset_top = 12.0
 offset_right = -16.0
-offset_bottom = 110.0
+offset_bottom = 132.0
 grow_horizontal = 2
 
 [node name="Margin" type="MarginContainer" parent="Panel"]
@@ -35,6 +35,11 @@ text = "Region"
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "Stats"
+
+[node name="ExitsLabel" type="Label" parent="Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Exits: —"
 
 [node name="HintLabel" type="Label" parent="Panel/Margin/VBox"]
 layout_mode = 2

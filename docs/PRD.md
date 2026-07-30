@@ -55,8 +55,11 @@ The entire map should be designed so additional regions can easily be added late
 ## Beach
 Player house, starting area, fishing, beach resources, shipwrecks, small dock.
 
-## Beach Town
-Central progression hub. Begins abandoned; evolves with restoration.
+## Beach Harbor
+Central coastal hub (internal id: `harbor`). Begins abandoned; evolves with restoration.
+
+## Idyllic City Center
+Ancient cultural district (internal id: `city`): museum, town hall, marketplace, festivals.
 
 ## Jungle
 Dense tropical vegetation, forageables, wildlife, ruins, vine-blocked paths.
@@ -73,13 +76,19 @@ Mining, crystals, ancient machinery, hidden chambers.
 ## Rocky Mining Area
 Primary mining location with classic tool progression.
 
-## Idyllic City Center
-Ancient cultural district: museum, town hall, marketplace, festivals.
+## Scary Cursed Part
+Dark southeast corner. Locked late-game area.
+
+## Volcano
+Northwest volcanic mountain. Locked behind jungle restoration.
+
+## Secret Ancient High Tech Town
+Late-game mystery city with ancient technology.
 
 ## Mountain
 Forests, waterfalls, observatory, cabins, scenic overlooks.
 
-## Mountain Summit
+## Mountain Top
 Late-game destination with major story revelations.
 
 ---

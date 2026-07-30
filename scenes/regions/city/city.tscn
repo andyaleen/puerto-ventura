@@ -1,0 +1,84 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/regions/region_base.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/systems/region_exit.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/regions/city/city_map.tscn" id="3"]
+
+[node name="City" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1")
+region_id = "city"
+map_size_tiles = Vector2i(96, 72)
+
+[node name="CityMap" parent="." instance=ExtResource("3")]
+
+[node name="WorldBounds" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Spawns" type="Node2D" parent="."]
+
+[node name="default" type="Marker2D" parent="Spawns"]
+position = Vector2(768, 680)
+
+[node name="from_beach" type="Marker2D" parent="Spawns"]
+position = Vector2(200, 1040)
+
+[node name="from_harbor" type="Marker2D" parent="Spawns"]
+position = Vector2(768, 1040)
+
+[node name="from_jungle" type="Marker2D" parent="Spawns"]
+position = Vector2(120, 288)
+
+[node name="from_rocky_mining" type="Marker2D" parent="Spawns"]
+position = Vector2(1416, 640)
+
+[node name="from_desert" type="Marker2D" parent="Spawns"]
+position = Vector2(1152, 120)
+
+[node name="RestorationMarkers" type="Node2D" parent="."]
+
+[node name="FountainMarker" type="Marker2D" parent="RestorationMarkers"]
+position = Vector2(768, 576)
+
+[node name="TownHallMarker" type="Marker2D" parent="RestorationMarkers"]
+position = Vector2(768, 272)
+
+[node name="MuseumMarker" type="Marker2D" parent="RestorationMarkers"]
+position = Vector2(296, 416)
+
+[node name="MarketplaceMarker" type="Marker2D" parent="RestorationMarkers"]
+position = Vector2(1008, 848)
+
+[node name="PublicGardensMarker" type="Marker2D" parent="RestorationMarkers"]
+position = Vector2(520, 720)
+
+[node name="ExitToBeach" parent="." instance=ExtResource("2")]
+position = Vector2(160, 1136)
+target_region = "beach"
+target_spawn = "from_city"
+size = Vector2(128, 48)
+
+[node name="ExitToHarbor" parent="." instance=ExtResource("2")]
+position = Vector2(768, 1136)
+target_region = "harbor"
+target_spawn = "from_city"
+size = Vector2(128, 48)
+
+[node name="ExitToJungle" parent="." instance=ExtResource("2")]
+position = Vector2(16, 288)
+target_region = "jungle"
+target_spawn = "from_city"
+size = Vector2(48, 128)
+
+[node name="ExitToMining" parent="." instance=ExtResource("2")]
+position = Vector2(1520, 640)
+target_region = "rocky_mining"
+target_spawn = "from_city"
+size = Vector2(48, 128)
+
+[node name="ExitToDesert" parent="." instance=ExtResource("2")]
+position = Vector2(1152, 16)
+target_region = "desert"
+target_spawn = "from_city"
+size = Vector2(128, 48)

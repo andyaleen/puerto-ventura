@@ -5,6 +5,9 @@
 # Imported assets (Godot 3 style cache; Godot 4 .import metadata is committed)
 .import/
 
+# Local export config (often machine-specific)
+export_presets.cfg
+
 # Native / export
 bin/
 export/

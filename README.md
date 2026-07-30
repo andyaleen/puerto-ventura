@@ -7,8 +7,9 @@ You inherit a beach cottage on a nearly abandoned paradise. Explore modular regi
 ## Open in Godot
 
 1. Open Godot 4.7+ → **Import** → `project.godot`
-2. Press **F5** to start on the Beach
-3. Switch the editor to the **2D** tab when editing maps (not 3D)
+2. Press **F5** to start the full game on the Beach
+3. Press **F6** to play the scene currently open in the editor (e.g. City)
+4. Switch the editor to the **2D** tab when editing maps (not 3D)
 
 ## Controls
 
@@ -21,34 +22,37 @@ You inherit a beach cottage on a nearly abandoned paradise. Explore modular regi
 
 - Modular region maps that load one at a time
 - Fade-to-black transitions between regions
-- Playable **Beach** (Kenney tilemap) ↔ Beach Town ↔ Jungle
+- Annotated island region graph with fade loads between zones
+- Starting unlocked: **Beach**, **Harbor**, **City**, **Jungle**
 - Shared `island_tileset.tres` built from Kenney CC0 sheets
 - Lightweight GameState + RegionManager autoloads
 
 ## How maps and graphics work
 
-Beach is the template for every future region:
+Beach, Harbor, and City use the same map template:
 
 1. **Art lives in** `assets/tilesheets/` (Kenney CC0, 16×16 tiles, 1px separation)
 2. **Shared TileSet** is baked by `tools/build_tileset.gd` → `assets/tilesets/island_tileset.tres`
-3. **Map layout** is baked by `tools/build_beach_map.gd` → `scenes/regions/beach/beach_map.tscn`
-4. **Gameplay scene** `beach.tscn` instances that map and adds exits, spawns, pickups
+3. **Map layouts** are baked by `tools/build_<region>_map.gd`
+4. **Gameplay scenes** instance their map and add exits, spawns, pickups, and restoration markers
 
-### Regenerate the Beach map (optional)
+### Regenerate generated maps (optional)
 
 From a terminal with Godot on PATH, or using your Godot console exe:
 
 ```bash
 godot --headless --path . --script res://tools/build_tileset.gd
 godot --headless --path . --script res://tools/build_beach_map.gd
+godot --headless --path . --script res://tools/build_harbor_map.gd
+godot --headless --path . --script res://tools/build_city_map.gd
 ```
 
 ### Edit maps by hand in Godot (recommended for polish)
 
-1. Open `scenes/regions/beach/beach_map.tscn`
-2. Select the `Ground` or `Props` TileMapLayer
+1. Open `scenes/regions/<region>/<region>_map.tscn`
+2. Select `GroundLayer`, `PathLayer`, `WaterLayer`, `PropsLayer`, `DecorLayer`, or `AbovePlayerLayer`
 3. Paint tiles from the TileSet dock
-4. Keep exits/spawns in `beach.tscn` (not in the generated map)
+4. Keep exits/spawns in `<region>.tscn` (not in the generated map)
 
 Rule of thumb: **paint visuals in the map scene, keep gameplay in the region scene.**
 

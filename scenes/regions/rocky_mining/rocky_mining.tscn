@@ -1,9 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/regions/region_base.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/systems/region_exit.tscn" id="2"]
 
-
-[node name="RockyMiningArea" type="Node2D"]
+[node name="RockyMining" type="Node2D"]
 script = ExtResource("1")
 region_id = "rocky_mining"
 ground_color = Color(0.45, 0.45, 0.48, 1)
@@ -20,7 +20,7 @@ offset_right = 1000.0
 offset_bottom = 360.0
 theme_override_font_sizes/font_size = 22
 text = "Rocky Mining Area
-Primary mining district. Tool progression TBD."
+Locked. Primary mining district."
 horizontal_alignment = 1
 
 [node name="WorldBounds" type="StaticBody2D" parent="."]
@@ -31,7 +31,64 @@ collision_mask = 0
 
 [node name="default" type="Marker2D" parent="Spawns"]
 position = Vector2(640, 360)
+[node name="from_harbor" type="Marker2D" parent="Spawns"]
+position = Vector2(160, 520)
+[node name="from_city" type="Marker2D" parent="Spawns"]
+position = Vector2(200, 200)
+[node name="from_desert" type="Marker2D" parent="Spawns"]
+position = Vector2(640, 120)
+[node name="from_cursed_area" type="Marker2D" parent="Spawns"]
+position = Vector2(1120, 400)
 
-[node name="from_town" type="Marker2D" parent="Spawns"]
-position = Vector2(200, 360)
+[node name="Exit1" parent="." instance=ExtResource("2")]
+position = Vector2(16, 520)
+target_region = "harbor"
+target_spawn = "from_rocky_mining"
+size = Vector2(48, 96)
 
+[node name="ExitLabel1" type="Label" parent="Exit1"]
+offset_left = -70.0
+offset_top = -72.0
+offset_right = 90.0
+offset_bottom = -48.0
+text = "To Harbor"
+horizontal_alignment = 1
+[node name="Exit2" parent="." instance=ExtResource("2")]
+position = Vector2(120, 16)
+target_region = "city"
+target_spawn = "from_rocky_mining"
+size = Vector2(96, 32)
+
+[node name="ExitLabel2" type="Label" parent="Exit2"]
+offset_left = -70.0
+offset_top = -72.0
+offset_right = 90.0
+offset_bottom = -48.0
+text = "To City"
+horizontal_alignment = 1
+[node name="Exit3" parent="." instance=ExtResource("2")]
+position = Vector2(640, 16)
+target_region = "desert"
+target_spawn = "from_rocky_mining"
+size = Vector2(128, 32)
+
+[node name="ExitLabel3" type="Label" parent="Exit3"]
+offset_left = -70.0
+offset_top = -72.0
+offset_right = 90.0
+offset_bottom = -48.0
+text = "To Desert"
+horizontal_alignment = 1
+[node name="Exit4" parent="." instance=ExtResource("2")]
+position = Vector2(1240, 400)
+target_region = "cursed_area"
+target_spawn = "from_rocky_mining"
+size = Vector2(48, 96)
+
+[node name="ExitLabel4" type="Label" parent="Exit4"]
+offset_left = -70.0
+offset_top = -72.0
+offset_right = 90.0
+offset_bottom = -48.0
+text = "To Cursed Area"
+horizontal_alignment = 1

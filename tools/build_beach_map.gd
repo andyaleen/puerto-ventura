@@ -29,7 +29,11 @@ const BOX_WOOD := Vector2i(0, 25)       # brown 9-patch (walls, shipwreck)
 const BOX_TERRACOTTA := Vector2i(12, 25) # orange 9-patch (roof)
 
 var _ground: TileMapLayer
+var _path: TileMapLayer
+var _water: TileMapLayer
 var _props: TileMapLayer
+var _decor: TileMapLayer
+var _above: TileMapLayer
 
 
 func _init() -> void:
@@ -43,22 +47,17 @@ func _init() -> void:
 	root.name = "BeachMap"
 	root.y_sort_enabled = true
 
-	_ground = TileMapLayer.new()
-	_ground.name = "Ground"
-	_ground.tile_set = tile_set
-	_props = TileMapLayer.new()
-	_props.name = "Props"
-	_props.tile_set = tile_set
-	_props.y_sort_enabled = true
-	root.add_child(_ground)
-	root.add_child(_props)
-	_ground.owner = root
-	_props.owner = root
+	_ground = _make_layer(root, "GroundLayer", tile_set, false, -10)
+	_path = _make_layer(root, "PathLayer", tile_set, false, -8)
+	_water = _make_layer(root, "WaterLayer", tile_set, false, -9)
+	_props = _make_layer(root, "PropsLayer", tile_set, true, 0)
+	_decor = _make_layer(root, "DecorLayer", tile_set, false, -7)
+	_above = _make_layer(root, "AbovePlayerLayer", tile_set, true, 10)
 
 	_paint_ground()
 	_paint_path_and_dock()
 	_paint_vegetation()
-	_paint_box(_props, 11, 17, 18, 19, BOX_TERRACOTTA) # cottage roof
+	_paint_box(_above, 11, 17, 18, 19, BOX_TERRACOTTA) # cottage roof
 	_paint_box(_props, 11, 20, 18, 22, BOX_WOOD)       # cottage walls
 	_paint_box(_props, 65, 27, 73, 30, BOX_WOOD)       # shipwreck
 
@@ -73,26 +72,44 @@ func _init() -> void:
 	quit(0)
 
 
+func _make_layer(
+	root: Node,
+	layer_name: String,
+	tile_set: TileSet,
+	y_sort: bool,
+	z: int
+) -> TileMapLayer:
+	var layer := TileMapLayer.new()
+	layer.name = layer_name
+	layer.tile_set = tile_set
+	layer.y_sort_enabled = y_sort
+	layer.z_index = z
+	root.add_child(layer)
+	layer.owner = root
+	return layer
+
+
 func _paint_ground() -> void:
 	for y in H:
 		for x in W:
-			var tile := T_WATER
+			var tile := T_SAND
 			if y < GRASS_END:
 				tile = T_GRASS
-			elif y < SAND_END:
-				tile = T_SAND
 			_ground.set_cell(Vector2i(x, y), 0, tile)
+			if y >= SAND_END:
+				_water.set_cell(Vector2i(x, y), 0, T_WATER)
 
 
 func _paint_path_and_dock() -> void:
 	# Dirt path from the north exit down to the shore.
 	for y in range(0, SAND_END):
 		for x in range(39, 42):
-			_ground.set_cell(Vector2i(x, y), 0, T_DIRT)
+			_path.set_cell(Vector2i(x, y), 0, T_DIRT)
 	# Wooden dock reaching into the ocean (walkable: planks replace water).
 	for y in range(31, 39):
 		for x in range(56, 61):
-			_ground.set_cell(Vector2i(x, y), 0, T_PLANK)
+			_water.erase_cell(Vector2i(x, y))
+			_path.set_cell(Vector2i(x, y), 0, T_PLANK)
 
 
 func _is_reserved(x: int, y: int) -> bool:
@@ -118,7 +135,7 @@ func _paint_vegetation() -> void:
 			if (x * 31 + y * 17) % 29 == 0:
 				_props.set_cell(Vector2i(x, y), 0, TREES[(x + y) % TREES.size()])
 			elif (x * 13 + y * 7) % 31 == 0:
-				_props.set_cell(Vector2i(x, y), 0, BUSHES[(x + y) % BUSHES.size()])
+				_decor.set_cell(Vector2i(x, y), 0, BUSHES[(x + y) % BUSHES.size()])
 
 
 func _paint_box(layer: TileMapLayer, x0: int, y0: int, x1: int, y1: int, origin: Vector2i) -> void:

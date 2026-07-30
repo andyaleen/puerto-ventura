@@ -10,6 +10,12 @@ const OUT_PATH := "res://assets/tilesets/island_tileset.tres"
 const SOLID_TILES: Array[Vector2i] = [
 	Vector2i(0, 0), Vector2i(1, 0),          # ocean water
 	Vector2i(23, 10), Vector2i(23, 11),      # transparent-bg trees
+	Vector2i(6, 25), Vector2i(7, 25), Vector2i(8, 25),  # whitewashed walls
+	Vector2i(6, 26), Vector2i(7, 26), Vector2i(8, 26),
+	Vector2i(6, 30), Vector2i(7, 30), Vector2i(8, 30),
+	Vector2i(15, 25), Vector2i(16, 25), Vector2i(17, 25), # blue harbor shop roof
+	Vector2i(15, 26), Vector2i(16, 26), Vector2i(17, 26),
+	Vector2i(15, 30), Vector2i(16, 30), Vector2i(17, 30),
 	Vector2i(0, 25), Vector2i(1, 25), Vector2i(2, 25),  # brown box (walls/wreck)
 	Vector2i(0, 26), Vector2i(1, 26), Vector2i(2, 26),
 	Vector2i(0, 30), Vector2i(1, 30), Vector2i(2, 30),
