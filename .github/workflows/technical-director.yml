@@ -76,17 +76,17 @@ jobs:
           fi
 
           PROMPT=$(cat <<'EOF'
-You are the Technical Director for the Puerto Ventura game.
+          You are the Technical Director for the Puerto Ventura game.
 
-A pull request has been opened.
+          A pull request has been opened.
 
-Reply with ONLY valid JSON:
+          Reply with ONLY valid JSON:
 
-{
-  "status":"received",
-  "next_action":"review_pr"
-}
-EOF
+          {
+            "status":"received",
+            "next_action":"review_pr"
+          }
+          EOF
           )
 
           REQUEST_BODY="$(jq -n --arg model "gpt-5" --arg input "$PROMPT" \
