@@ -74,4 +74,5 @@ godot --headless --path . --script res://tools/build_<region>_map.gd
 
 - Update `docs/roadmap.md` when phase status meaningfully changes.
 - Keep `docs/architecture.md` in sync with new autoloads or region patterns.
-- Prefer editing design intent in `docs/game_design.md`; keep `PRD.md` as the longer source brief.
+- Prefer editing design intent under `docs/design/`; keep `PRD.md` as the longer source brief.
+- `docs/game_design.md` is an index into `docs/design/`.
