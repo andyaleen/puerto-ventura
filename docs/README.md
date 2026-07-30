@@ -10,6 +10,15 @@ Design and engineering references for the Godot 4.7 island restoration life sim.
 | [roadmap.md](roadmap.md) | Build order and near-term milestones |
 | [coding_rules.md](coding_rules.md) | Conventions for GDScript, scenes, and assets |
 
+## Development
+
+| File | Purpose |
+|------|---------|
+| [development/backlog.md](development/backlog.md) | Unordered work items |
+| [development/milestones.md](development/milestones.md) | Coarse checkpoints / exit criteria |
+| [development/current_sprint.md](development/current_sprint.md) | Active sprint goals |
+| [development/architecture_decisions.md](development/architecture_decisions.md) | ADR log |
+
 ## Design
 
 | File | Purpose |
