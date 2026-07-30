@@ -58,13 +58,62 @@ jobs:
             gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body "$COMMENT"
           done <<< "$ISSUE_NUMBERS"
 
-      - name: Verify OPENAI_API_KEY is set
+      - name: Call Technical Director (OpenAI)
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           set -euo pipefail
+
           if [ -z "${OPENAI_API_KEY}" ]; then
             echo "OPENAI_API_KEY secret is missing or empty."
             exit 1
           fi
-          echo "OPENAI_API_KEY is set (length=${#OPENAI_API_KEY})"
+
+          PROMPT=$(cat <<'EOF'
+You are the Technical Director for the Puerto Ventura game.
+
+A pull request has been opened.
+
+Reply with ONLY valid JSON:
+
+{
+  "status":"received",
+  "next_action":"review_pr"
+}
+EOF
+          )
+
+          REQUEST_BODY="$(jq -n --arg model "gpt-5" --arg input "$PROMPT" \
+            '{model: $model, store: false, input: $input}')"
+
+          HTTP_CODE="$(curl --silent --show-error \
+            --output response.json \
+            --write-out '%{http_code}' \
+            https://api.openai.com/v1/responses \
+            -H "Authorization: Bearer ${OPENAI_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "$REQUEST_BODY")"
+
+          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            echo "OpenAI Responses API failed (HTTP ${HTTP_CODE}):"
+            cat response.json
+            exit 1
+          fi
+
+          MODEL_TEXT="$(jq -r '
+            (
+              [.output[]? | select(.type == "message") | .content[]? | select(.type == "output_text") | .text]
+              | map(select(. != null and . != ""))
+              | first
+            )
+            // .output[0].content[0].text
+            // empty
+          ' response.json)"
+
+          if [ -z "$MODEL_TEXT" ] || [ "$MODEL_TEXT" = "null" ]; then
+            echo "OpenAI response did not include output text:"
+            cat response.json
+            exit 1
+          fi
+
+          echo "$MODEL_TEXT"
