@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 @export var move_speed: float = 110.0
+@export var sprint_multiplier: float = 1.6
 
 const BOB_HEIGHT := 1.5
 const BOB_SPEED := 12.0
@@ -51,15 +52,20 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var input_vector := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	velocity = input_vector.normalized() * move_speed if input_vector != Vector2.ZERO else Vector2.ZERO
+	var is_moving := input_vector != Vector2.ZERO
+	# Hold-to-sprint: only while directional input is present. Locks ignore sprint above.
+	var is_sprinting := is_moving and Input.is_action_pressed("sprint")
+	var speed := move_speed * sprint_multiplier if is_sprinting else move_speed
+	velocity = input_vector.normalized() * speed if is_moving else Vector2.ZERO
 	move_and_slide()
 
 	if input_vector.x != 0.0:
 		_sprite.flip_h = input_vector.x < 0.0
 
-	# Simple walk bob until we have real animation frames.
+	# Placeholder bob; sprint uses the exported multiplier as cadence scale (no extra magic).
 	if velocity.length_squared() > 0.0:
-		_bob_time += delta * BOB_SPEED
+		var bob_speed := BOB_SPEED * sprint_multiplier if is_sprinting else BOB_SPEED
+		_bob_time += delta * bob_speed
 		_sprite.position.y = _sprite_base_y - absf(sin(_bob_time)) * BOB_HEIGHT
 	else:
 		_reset_walk_bob()
