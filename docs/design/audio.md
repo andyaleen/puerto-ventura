@@ -55,7 +55,6 @@ Core sound effects include:
 - Crafting
 - Tool usage
 - Fishing casts and splashes
-- Fade transition "whoosh"
 - Restoration construction
 
 Every interaction should feel responsive without becoming repetitive.
