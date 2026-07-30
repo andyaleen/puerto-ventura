@@ -61,7 +61,9 @@ Ancient City Residents – Five to nine mysterious individuals living within a h
 
 Mountain Summit Shamans – A secluded community living high above the clouds in a Shangri-La-like sanctuary. They serve as spiritual guides, offering philosophical insight, advanced abilities, and clues about the island's deepest secrets.
 
-Families & Community
+Museum keeper
+
+# Families & Community
 
 Not every resident begins the game alone. Some characters will have spouses, siblings, parents, children, or lifelong friends, while others will form new families as Puerto Ventura grows. As houses are rebuilt and businesses reopen, new families move to the island, children begin playing in the streets, schools and parks become active, and the town gradually transforms from a nearly abandoned settlement into a vibrant, living community where every new face reflects the island's recovery.
 
