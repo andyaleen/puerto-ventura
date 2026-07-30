@@ -74,7 +74,7 @@ Shared region behavior lives in `scripts/regions/region_base.gd`.
 
 ## Player movement
 
-Milestone 1 walk / sprint / movement-lock / animation-contract intent lives in [`design/player_movement.md`](design/player_movement.md). Lock API: [ADR-007](development/architecture_decisions.md#adr-007-player-movement-lock-api) (**Accepted**). Walk and hold-to-sprint (`sprint` input, `sprint_multiplier`) are implemented on the player. The player owns a named movement-lock set; locomotion runs only when that set is empty. `RegionManager` acquires/releases `&"region_transition"` during travel. `RegionManager.is_busy()` remains for transition orchestration, not as the player movement gate.
+Milestone 1 walk / sprint / movement-lock / animation-contract intent lives in [`design/player_movement.md`](design/player_movement.md). Lock API: [ADR-007](development/architecture_decisions.md#adr-007-player-movement-lock-api) (**Accepted**). Walk and hold-to-sprint (`sprint` input, `sprint_multiplier`) are implemented on the player. The player owns a named movement-lock set; locomotion runs only when that set is empty. Derived `MovementState` (`IDLE` / `WALKING` / `SPRINTING` / `LOCKED`) and read-only animation-contract getters are exposed on the player for future animation consumers; `INTERACTING` is deferred. `RegionManager` acquires/releases `&"region_transition"` during travel. `RegionManager.is_busy()` remains for transition orchestration, not as the player movement gate.
 
 ## Current playable shell
 

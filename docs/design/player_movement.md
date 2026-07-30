@@ -2,7 +2,7 @@
 
 Authoritative Milestone 1 (vertical slice) behavior for player locomotion. High-level bullets also appear under Player Movement in [`../development/backlog.md`](../development/backlog.md); **this document wins** where they disagree for M1 scope.
 
-**Implementation status:** Movement-lock API and `region_transition` integration are implemented on the player / `RegionManager` (ADR-007 Accepted). Sprint input action (`sprint`) and hold-to-sprint speed (`move_speed * sprint_multiplier`, default 1.6) are implemented on the player. Movement-state enum exposure and the animation contract remain follow-up work.
+**Implementation status:** Movement-lock API and `region_transition` integration are implemented on the player / `RegionManager` (ADR-007 Accepted). Sprint input action (`sprint`) and hold-to-sprint speed (`move_speed * sprint_multiplier`, default 1.6) are implemented on the player. Typed `MovementState` (`IDLE` / `WALKING` / `SPRINTING` / `LOCKED`) and animation-contract getters are implemented on the player; state is derived each query/frame from locks + input (no FSM framework). `INTERACTING` remains deferred until an interaction system owns that mode.
 
 **Compatibility targets:** `CharacterBody2D` player, `RegionManager`, modular region scenes, existing move/interact input actions, and future dialogue, fishing, tools, mounts, and combat systems.
 
@@ -21,10 +21,12 @@ Already in `scenes/player/player.gd` / `player.tscn`:
 | Acceleration | Immediate full speed / stop (no ramp) |
 | Collision | `CharacterBody2D`; `collision_layer = 2` (player), `collision_mask = 1` (world) |
 | Region travel lock | `RegionManager` acquires `&"region_transition"` on the player via the movement-lock API |
-| Facing | Horizontal `flip_h` only when `input_vector.x != 0` |
-| Feedback | Placeholder sprite bob while moving (faster cadence while sprinting, scaled by `sprint_multiplier`) |
+| Facing | Stored as last non-zero normalized `Vector2` (8-way); placeholder `flip_h` still only when `input_vector.x != 0` |
+| Movement state | Derived `MovementState`: lock → sprint → walk → idle |
+| Animation contract | Read-only getters: `get_movement_state`, `get_movement_direction`, `get_facing_direction`, `is_walking`, `is_sprinting`, `is_movement_locked` |
+| Feedback | Placeholder sprite bob while moving (faster cadence while sprinting, scaled by `sprint_multiplier`; driven by derived walk/sprint state) |
 
-Baseline locomotion above is current; remaining gaps are the movement-state enum and animation-contract getters.
+Baseline locomotion and the animation-contract surface above are current. Final sprite sheets / `AnimationPlayer` / `AnimationTree` remain follow-up work. `INTERACTING` is deferred.
 
 ---
 
@@ -248,9 +250,10 @@ The player controller must expose read-only movement data for a future animation
 Facing rules for M1:
 
 - Update `facing_direction` whenever movement input is non-zero.
+- Store the **normalized** move-input vector (cardinals and diagonals). Equal-axis diagonals are therefore deterministic unit diagonals (e.g. right+up → `(1/√2, -1/√2)`).
 - Horizontal component may drive `flip_h` until 8-directional frames exist.
 - Pure vertical input keeps last horizontal flip but should still store up/down in `facing_direction` for future anims.
-- Locks do not reset facing.
+- Locks clear `movement_direction` but do not reset facing.
 
 Out of scope here: final walk/sprint/idle frame sets, tool/fish/combat anims (those systems will extend the contract later).
 
@@ -323,9 +326,11 @@ Candidate tickets after this spec is approved (do not open from this doc ticket)
 
 1. ~~Implement sprint input + multiplier on `player.gd` per this spec~~ (done)
 2. ~~Implement movement-lock API and migrate `RegionManager` busy gating to a named lock~~ (done; ADR-007 Accepted)
-3. Expose animation contract getters / movement-state enum; keep placeholder bob until art arrives
+3. ~~Expose animation contract getters / movement-state enum; keep placeholder bob until art arrives~~ (done; `INTERACTING` deferred)
 4. Wire dialogue / menu / fishing systems to acquire/release locks when those features are built
 5. Basic NPC collision policy ticket (not part of movement implementation alone)
+6. Final player walk/sprint/idle frames + `AnimationPlayer` / `AnimationTree` consuming the animation contract
+7. Add `INTERACTING` to `MovementState` when a real player-local interaction owner exists
 
 ---
 
