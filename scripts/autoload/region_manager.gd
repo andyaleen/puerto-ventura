@@ -8,6 +8,7 @@ signal transition_finished(region_id: String)
 
 const FADE_OVERLAY_SCENE := preload("res://scenes/systems/fade_overlay.tscn")
 const REGION_REGISTRY := preload("res://scripts/data/region_registry.gd")
+const LOCK_REGION_TRANSITION := &"region_transition"
 
 var _fade: CanvasLayer
 var _is_transitioning: bool = false
@@ -23,6 +24,10 @@ func _ready() -> void:
 
 func register_player(player: CharacterBody2D) -> void:
 	_player = player
+	# Scene changes free the previous player; re-acquire the lock on the new
+	# instance while a transition is still in progress (e.g. during fade-in).
+	if _is_transitioning:
+		_request_region_transition_lock()
 
 
 func get_player() -> CharacterBody2D:
@@ -38,10 +43,9 @@ func travel_to(region_id: String, spawn_id: String = "default") -> void:
 
 	_is_transitioning = true
 	transition_started.emit(region_id)
+	_request_region_transition_lock()
 
 	var tree := get_tree()
-	if _player:
-		_player.set_physics_process(false)
 
 	await _fade.fade_out()
 	GameState.set_travel_target(region_id, spawn_id)
@@ -50,9 +54,7 @@ func travel_to(region_id: String, spawn_id: String = "default") -> void:
 	var err := tree.change_scene_to_file(scene_path)
 	if err != OK:
 		push_error("Failed to load region '%s' at %s (error %s)" % [region_id, scene_path, err])
-		_is_transitioning = false
-		if _player:
-			_player.set_physics_process(true)
+		_finish_transition_failure()
 		await _fade.fade_in()
 		return
 
@@ -60,10 +62,35 @@ func travel_to(region_id: String, spawn_id: String = "default") -> void:
 	await tree.process_frame
 	await tree.process_frame
 
+	# register_player() re-locks the new player while _is_transitioning is true.
 	await _fade.fade_in()
-	_is_transitioning = false
-	transition_finished.emit(region_id)
+	_finish_transition_success(region_id)
 
 
 func is_busy() -> bool:
 	return _is_transitioning
+
+
+func _request_region_transition_lock() -> void:
+	if _player == null or not is_instance_valid(_player):
+		return
+	if _player.has_method("request_movement_lock"):
+		_player.call("request_movement_lock", LOCK_REGION_TRANSITION)
+
+
+func _release_region_transition_lock() -> void:
+	if _player == null or not is_instance_valid(_player):
+		return
+	if _player.has_method("release_movement_lock"):
+		_player.call("release_movement_lock", LOCK_REGION_TRANSITION)
+
+
+func _finish_transition_success(region_id: String) -> void:
+	_release_region_transition_lock()
+	_is_transitioning = false
+	transition_finished.emit(region_id)
+
+
+func _finish_transition_failure() -> void:
+	_release_region_transition_lock()
+	_is_transitioning = false
