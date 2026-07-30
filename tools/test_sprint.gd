@@ -23,18 +23,26 @@ func _run() -> void:
 		"sprint action must have default bindings"
 	)
 
-	var has_shift := false
+	var has_left_shift := false
+	var has_right_shift := false
 	var has_shoulder := false
 	for event in InputMap.action_get_events("sprint"):
 		if event is InputEventKey:
 			var key_event := event as InputEventKey
 			if key_event.physical_keycode == KEY_SHIFT:
-				has_shift = true
+				if key_event.location == KEY_LOCATION_LEFT:
+					has_left_shift = true
+				elif key_event.location == KEY_LOCATION_RIGHT:
+					has_right_shift = true
+				elif key_event.location == KEY_LOCATION_UNSPECIFIED:
+					has_left_shift = true
+					has_right_shift = true
 		elif event is InputEventJoypadButton:
 			var joy_event := event as InputEventJoypadButton
 			if joy_event.button_index == JOY_BUTTON_LEFT_SHOULDER:
 				has_shoulder = true
-	_assert(has_shift, "sprint must bind keyboard Shift")
+	_assert(has_left_shift, "sprint must bind left Shift (or unspecified Shift)")
+	_assert(has_right_shift, "sprint must bind right Shift (or unspecified Shift)")
 	_assert(has_shoulder, "sprint must bind gamepad LB / L1 (left shoulder)")
 
 	var player_scene: PackedScene = load("res://scenes/player/player.tscn")
@@ -63,6 +71,8 @@ func _run() -> void:
 	var move_speed: float = float(player.get("move_speed"))
 	var sprint_multiplier: float = float(player.get("sprint_multiplier"))
 	var expected_sprint: float = move_speed * sprint_multiplier
+	var sprite: Sprite2D = player.get_node("Sprite")
+	var sprite_base_y: float = sprite.position.y
 
 	# Walk without sprint held.
 	_release_move_and_sprint()
@@ -93,9 +103,7 @@ func _run() -> void:
 		"diagonal sprint magnitude must match cardinal sprint after normalization"
 	)
 	_assert(
-		is_equal_approx(player.velocity.x, player.velocity.y * -1.0) or (
-			absf(absf(player.velocity.x) - absf(player.velocity.y)) < SPEED_EPSILON
-		),
+		absf(absf(player.velocity.x) - absf(player.velocity.y)) < SPEED_EPSILON,
 		"diagonal sprint components should be equal magnitude"
 	)
 
@@ -115,6 +123,10 @@ func _run() -> void:
 	player.call("_physics_process", 0.016)
 	_assert(player.velocity == Vector2.ZERO, "lock must clear sprint velocity")
 	_assert(bool(player.call("is_movement_locked")), "player should remain locked")
+	_assert(
+		is_equal_approx(sprite.position.y, sprite_base_y),
+		"lock must reset placeholder bob to base Y"
+	)
 
 	# After unlock, sprint resumes only if still held with movement input.
 	player.call("release_movement_lock", LOCK_A)
@@ -136,43 +148,16 @@ func _run() -> void:
 		"sprint held without movement after unlock must stay idle"
 	)
 
-	# Placeholder bob resets when idle / locked.
+	# Idle resets placeholder bob.
 	_release_move_and_sprint()
 	Input.action_press("move_right")
-	Input.action_press("sprint")
 	player.call("_physics_process", 0.05)
-	var sprite: Sprite2D = player.get_node("Sprite")
-	var base_y: float = sprite.position.y
-	# After moving, bob may have offset; idle must reset to base captured in _ready.
-	# Force another frame of movement then idle.
-	player.call("_physics_process", 0.05)
-	var bobbed_y: float = sprite.position.y
 	_release_move_and_sprint()
 	player.call("_physics_process", 0.016)
 	_assert(
-		is_equal_approx(sprite.position.y, bobbed_y) or true,
-		"sanity: bob path exercised"
-	)
-	# Reset path: idle clears bob to the sprite base established at ready (-8 default).
-	_assert(
-		is_equal_approx(sprite.position.y, -8.0),
+		is_equal_approx(sprite.position.y, sprite_base_y),
 		"idle must reset placeholder bob to base Y"
 	)
-	Input.action_press("move_right")
-	Input.action_press("sprint")
-	player.call("_physics_process", 0.05)
-	player.call("request_movement_lock", LOCK_A)
-	player.call("_physics_process", 0.016)
-	_assert(
-		is_equal_approx(sprite.position.y, -8.0),
-		"lock must reset placeholder bob to base Y"
-	)
-	player.call("release_movement_lock", LOCK_A)
-	_release_move_and_sprint()
-
-	# Avoid unused warning if bob never differed (possible on tiny dt).
-	if is_equal_approx(base_y, bobbed_y):
-		pass
 
 	if _failures == 0:
 		print("test_sprint: PASS")
