@@ -3,6 +3,7 @@
 name: technical-director
 
 on:
+  workflow_dispatch:
   issue_comment:
     types: [created]
 
@@ -13,7 +14,12 @@ permissions:
 
 jobs:
   notify-linked-issues:
-    if: contains(github.event.comment.body, 'technical-director-review')
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.issue.pull_request &&
+        github.event.comment.body == 'technical-director-review'
+      )
     runs-on: ubuntu-latest
     steps:
       - name: Comment on closing issues
