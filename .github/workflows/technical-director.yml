@@ -1,0 +1,19 @@
+# Placeholder: notifies the technical director (ChatGPT) that Cursor finished a ticket.
+# Fires when a pull request is opened or marked ready (agent completion signal).
+name: technical-director
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo director notify
+        run: |
+          echo "technical-director placeholder ran"
+          echo "pr=${{ github.event.pull_request.number }}"
+          echo "title=${{ github.event.pull_request.title }}"
+          echo "url=${{ github.event.pull_request.html_url }}"
+          echo "author=${{ github.event.pull_request.user.login }}"

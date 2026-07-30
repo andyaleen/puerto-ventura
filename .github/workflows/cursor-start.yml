@@ -1,0 +1,20 @@
+# Placeholder: records / reacts when agent work is kicked off.
+# Mirrors the Cursor Automation kickoff (issue comment: agent go).
+name: cursor-start
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  verify:
+    if: |
+      github.event.issue.pull_request == null &&
+      contains(github.event.comment.body, 'agent go')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo kickoff
+        run: |
+          echo "cursor-start placeholder ran"
+          echo "issue=${{ github.event.issue.number }}"
+          echo "comment_user=${{ github.event.comment.user.login }}"

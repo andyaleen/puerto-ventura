@@ -1,0 +1,18 @@
+# Placeholder: syncs project state after work lands on master.
+# Fires on push to master (e.g. after a merged agent PR).
+name: project-sync
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo project sync
+        run: |
+          echo "project-sync placeholder ran"
+          echo "sha=${{ github.sha }}"
+          echo "ref=${{ github.ref }}"
+          echo "actor=${{ github.actor }}"
