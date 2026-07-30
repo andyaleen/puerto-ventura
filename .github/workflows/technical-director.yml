@@ -124,6 +124,7 @@ jobs:
             collect_doc "docs/design/vision.md"
             collect_doc "docs/design/gameplay.md"
             collect_doc "docs/design/progression.md"
+            collect_doc "docs/design/player_movement.md"
           } > project_docs.md
 
           jq -n \
