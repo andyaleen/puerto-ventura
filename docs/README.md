@@ -25,6 +25,7 @@ Design and engineering references for the Godot 4.7 island restoration life sim.
 |------|---------|
 | [design/vision.md](design/vision.md) | Pitch, pillars, tone |
 | [design/gameplay.md](design/gameplay.md) | Core loop and systems priorities |
+| [design/player_movement.md](design/player_movement.md) | Milestone 1 walk / sprint / locks / animation contract |
 | [design/world.md](design/world.md) | Modular regions and navigation |
 | [design/characters.md](design/characters.md) | Player and NPCs |
 | [design/locations.md](design/locations.md) | Region list and fantasies |

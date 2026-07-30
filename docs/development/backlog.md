@@ -2,6 +2,8 @@
 
 ## Player Movement
 
+Authoritative Milestone 1 detail: [`docs/design/player_movement.md`](../design/player_movement.md).
+
 - Walk in eight directions.
 - Sprint/run using a stamina-free movement boost.
 - Smooth transitions between walking, running, riding, and interacting.

@@ -72,6 +72,10 @@ Shared region behavior lives in `scripts/regions/region_base.gd`.
 | `restoration_catalog.gd` | Restoration project definitions (costs / hooks to flesh out) |
 | `region_registry.gd` | Island graph and unlock flags |
 
+## Player movement
+
+Milestone 1 walk / sprint / movement-lock / animation-contract intent lives in [`design/player_movement.md`](design/player_movement.md). Proposed lock API: [ADR-007](development/architecture_decisions.md#adr-007-player-movement-lock-api). The playable prototype still uses a simple `CharacterBody2D` controller with region-busy gating only.
+
 ## Current playable shell
 
 Starting unlocked regions: Beach, Harbor, City, Jungle.

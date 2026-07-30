@@ -52,3 +52,10 @@ Do not redesign architecture in code unless requested; propose an ADR here first
 - **Context:** Cozy restoration fantasy vs late hazardous regions.
 - **Decision:** TBD — prefer none or very light hazards; document in `docs/design/combat.md` before implementing.
 - **Consequences:** Avoid building battle systems until decided.
+
+## ADR-007: Player movement-lock API
+
+- **Status:** Proposed
+- **Context:** Milestone 1 needs walk/sprint plus freezes for region transitions, dialogue, menus, fishing, cutscenes, and later tools. The prototype only polls `RegionManager.is_busy()`, which does not coordinate multiple systems. Independent “re-enable movement” flags would unlock the player while another system still needs them frozen.
+- **Decision (proposed):** Keep the player as a `CharacterBody2D` controller. Add a named movement-lock API on the player (`request_movement_lock` / `release_movement_lock` / `is_movement_locked`). External systems acquire and release locks by source id; locomotion runs only when the lock set is empty. Derive `IDLE` / `WALKING` / `SPRINTING` / `INTERACTING` / `LOCKED` each frame without a heavyweight FSM framework for M1. Full behavior is specified in [`docs/design/player_movement.md`](../design/player_movement.md).
+- **Consequences:** Implementation tickets must migrate region-transition gating onto a `region_transition` lock; dialogue/UI/fishing must use the same API. No new movement autoload unless a second body needs identical locking. Do not implement the API in the specification-only ticket that introduced this ADR.
