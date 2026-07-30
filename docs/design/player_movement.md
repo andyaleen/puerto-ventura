@@ -2,7 +2,7 @@
 
 Authoritative Milestone 1 (vertical slice) behavior for player locomotion. High-level bullets also appear under Player Movement in [`../development/backlog.md`](../development/backlog.md); **this document wins** where they disagree for M1 scope.
 
-**Implementation status:** Movement-lock API and `region_transition` integration are implemented on the player / `RegionManager` (ADR-007 Accepted). Sprint input, movement-state enum exposure, and the animation contract remain follow-up work.
+**Implementation status:** Movement-lock API and `region_transition` integration are implemented on the player / `RegionManager` (ADR-007 Accepted). Sprint input action (`sprint`) and hold-to-sprint speed (`move_speed * sprint_multiplier`, default 1.6) are implemented on the player. Movement-state enum exposure and the animation contract remain follow-up work.
 
 **Compatibility targets:** `CharacterBody2D` player, `RegionManager`, modular region scenes, existing move/interact input actions, and future dialogue, fishing, tools, mounts, and combat systems.
 
@@ -16,14 +16,15 @@ Already in `scenes/player/player.gd` / `player.tscn`:
 |----------|---------|
 | Directions | Eight-way via `Input.get_vector("move_left", "move_right", "move_up", "move_down")` |
 | Speed | `@export var move_speed: float = 110.0` on the player |
+| Sprint | Hold `sprint` (Shift / LB) with movement input → `move_speed * sprint_multiplier` (default 1.6) |
 | Diagonal | Input vector normalized before applying speed |
 | Acceleration | Immediate full speed / stop (no ramp) |
 | Collision | `CharacterBody2D`; `collision_layer = 2` (player), `collision_mask = 1` (world) |
 | Region travel lock | `RegionManager` acquires `&"region_transition"` on the player via the movement-lock API |
 | Facing | Horizontal `flip_h` only when `input_vector.x != 0` |
-| Feedback | Placeholder sprite bob while moving |
+| Feedback | Placeholder sprite bob while moving (faster cadence while sprinting, scaled by `sprint_multiplier`) |
 
-This ticket **does not** change that code. Implementation tickets must align the controller to this spec.
+Baseline locomotion above is current; remaining gaps are the movement-state enum and animation-contract getters.
 
 ---
 
@@ -320,9 +321,9 @@ Significant architectural addition (coordinated movement locks) is recorded as *
 
 Candidate tickets after this spec is approved (do not open from this doc ticket):
 
-1. Implement sprint input + multiplier on `player.gd` per this spec
+1. ~~Implement sprint input + multiplier on `player.gd` per this spec~~ (done)
 2. ~~Implement movement-lock API and migrate `RegionManager` busy gating to a named lock~~ (done; ADR-007 Accepted)
-3. Expose animation contract getters; keep placeholder bob until art arrives
+3. Expose animation contract getters / movement-state enum; keep placeholder bob until art arrives
 4. Wire dialogue / menu / fishing systems to acquire/release locks when those features are built
 5. Basic NPC collision policy ticket (not part of movement implementation alone)
 
