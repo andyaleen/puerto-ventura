@@ -1,24 +1,113 @@
-# Milestones
+# Milestone 1 - Vertical Slice
 
-Coarse checkpoints. Detail lives in [../roadmap.md](../roadmap.md) and [backlog.md](backlog.md).
+Goal: A playable 20-minute demo proving the core gameplay loop.
 
-| Milestone | Goal | Exit criteria |
-|-----------|------|---------------|
-| **M0 — Prototype shell** | Walk the island skeleton | Regions load, fades work, Beach pickups, HUD | **Done** |
-| **M1 — Starting world** | Four early areas feel real | Beach matches sketch; farm/home exists or decided; Jungle tilemapped; exits match registry |
-| **M2 — Restoration vertical slice** | One full gather → restore → see change | Harbor project completable; catalog + GameState wired; visible map/prop change |
-| **M3 — Economy loop** | Restorations have meaningful costs | Spend resources/money; day or tools matter lightly |
-| **M4 — Fishing pillar** | Daily loop beyond pickups | Cast/catch/sell (or turn-in) at Beach/Harbor |
-| **M5 — Living town** | People return with districts | ≥1 NPC gated by restoration; dialogue stub |
-| **M6 — Content & art pass** | Late regions + polish | Locked regions playable stubs→maps; audio/UI basics; save/load |
+- Player Movement
+- Camera
+- Inventory
+- Dialogue
+- Day & Night Cycle
+- Time System
+- Save System
+- Fishing
+- Basic Trading
+- Basic NPCs
 
-## Current focus
+---
 
-**M1 → M2:** finish starting-world clarity, then ship the first Harbor restoration.
+# Milestone 2 - Homestead
 
-## Non-goals until M2
+Goal: Build and improve the player's home and establish the primary economy.
 
-- Custom art overhaul
-- Full combat system
-- Deep farming / mining
-- Romance / large NPC cast
+- Farming
+- Cooking
+- Crafting
+- Storage
+- Expanded Trading
+- Tool Upgrades
+
+---
+
+# Milestone 3 - Island Restoration
+
+Goal: Introduce the game's defining progression—restoring Puerto Ventura.
+
+- Mining
+- Restoration Projects
+- Resource Processing
+- Building Unlocks
+- Harbor Restoration
+- New Merchants
+- Economy Expansion
+
+---
+
+# Milestone 4 - World Exploration
+
+Goal: Encourage exploration beyond the starting town.
+
+- Jungle
+- Rocky Mining Area
+- Desert
+- Mounts
+- World Map
+- Collectibles
+- Exploration Rewards
+
+---
+
+# Milestone 5 - NPCs & Community
+
+Goal: Make the island feel alive.
+
+- Daily NPC Schedules
+- Relationships
+- Gifts
+- Quests
+- Friendship Events
+- Festivals
+- Additional Residents
+
+---
+
+# Milestone 6 - Adventure
+
+Goal: Expand progression into dangerous areas.
+
+- Combat
+- Weapons
+- Enemy AI
+- Desert Cave
+- Deep Jungle
+- Rare Resources
+- Legendary Fish
+
+---
+
+# Milestone 7 - Story
+
+Goal: Complete the narrative experience.
+
+- Volcano
+- Cursed Area
+- Ancient High-Tech Town
+- Mountain
+- Story Events
+- Boss Encounter
+- Ending
+
+---
+
+# Milestone 8 - Polish
+
+Goal: Prepare for a public demo or Steam release.
+
+- Audio & Music
+- UI Polish
+- Balancing
+- Bug Fixing
+- Visual Effects
+- Accessibility
+- Performance Optimization
+- Achievements
+- Steam Integration
