@@ -1,19 +1,59 @@
-# Placeholder: notifies the technical director (ChatGPT) that Cursor finished a ticket.
-# Fires when a pull request is opened or marked ready (agent completion signal).
+# Notifies the technical director (ChatGPT) that Cursor finished a ticket.
+# Posts a ready marker on each issue this PR will close when merged.
 name: technical-director
 
 on:
   pull_request:
-    types: [opened, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
 
 jobs:
-  verify:
+  notify-linked-issues:
     runs-on: ubuntu-latest
     steps:
-      - name: Echo director notify
+      - name: Comment on closing issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          REPO: ${{ github.repository }}
         run: |
-          echo "technical-director placeholder ran"
-          echo "pr=${{ github.event.pull_request.number }}"
-          echo "title=${{ github.event.pull_request.title }}"
-          echo "url=${{ github.event.pull_request.html_url }}"
-          echo "author=${{ github.event.pull_request.user.login }}"
+          set -euo pipefail
+
+          OWNER="${REPO%/*}"
+          NAME="${REPO#*/}"
+
+          RESPONSE="$(gh api graphql -f query='
+            query($owner: String!, $name: String!, $number: Int!) {
+              repository(owner: $owner, name: $name) {
+                pullRequest(number: $number) {
+                  closingIssuesReferences(first: 50) {
+                    nodes { number }
+                  }
+                }
+              }
+            }
+          ' -f owner="$OWNER" -f name="$NAME" -F number="$PR_NUMBER")"
+
+          ISSUE_NUMBERS="$(printf '%s' "$RESPONSE" | jq -r '
+            .data.repository.pullRequest.closingIssuesReferences.nodes[].number
+          ')"
+
+          if [ -z "$ISSUE_NUMBERS" ]; then
+            echo "No closing issues linked to PR #$PR_NUMBER; exiting successfully."
+            exit 0
+          fi
+
+          COMMENT="$(printf 'technical-director-ready\n\nPR: #%s\nBranch: %s\nURL: %s\n' \
+            "$PR_NUMBER" "$PR_BRANCH" "$PR_URL")"
+
+          while IFS= read -r ISSUE_NUMBER; do
+            [ -z "$ISSUE_NUMBER" ] && continue
+            echo "Posting technical-director-ready on issue #$ISSUE_NUMBER"
+            gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body "$COMMENT"
+          done <<< "$ISSUE_NUMBERS"
