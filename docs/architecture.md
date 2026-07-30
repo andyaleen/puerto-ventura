@@ -74,7 +74,7 @@ Shared region behavior lives in `scripts/regions/region_base.gd`.
 
 ## Player movement
 
-Milestone 1 walk / sprint / movement-lock / animation-contract intent lives in [`design/player_movement.md`](design/player_movement.md). Proposed lock API: [ADR-007](development/architecture_decisions.md#adr-007-player-movement-lock-api). The playable prototype still uses a simple `CharacterBody2D` controller with region-busy gating only.
+Milestone 1 walk / sprint / movement-lock / animation-contract intent lives in [`design/player_movement.md`](design/player_movement.md). Lock API: [ADR-007](development/architecture_decisions.md#adr-007-player-movement-lock-api) (**Accepted**). The player owns a named movement-lock set; locomotion runs only when that set is empty. `RegionManager` acquires/releases `&"region_transition"` during travel. `RegionManager.is_busy()` remains for transition orchestration, not as the player movement gate.
 
 ## Current playable shell
 

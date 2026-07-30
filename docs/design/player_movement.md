@@ -2,7 +2,7 @@
 
 Authoritative Milestone 1 (vertical slice) behavior for player locomotion. High-level bullets also appear under Player Movement in [`../development/backlog.md`](../development/backlog.md); **this document wins** where they disagree for M1 scope.
 
-**Task type:** design / specification only. Do not treat this file as implemented behavior until follow-up tickets land.
+**Implementation status:** Movement-lock API and `region_transition` integration are implemented on the player / `RegionManager` (ADR-007 Accepted). Sprint input, movement-state enum exposure, and the animation contract remain follow-up work.
 
 **Compatibility targets:** `CharacterBody2D` player, `RegionManager`, modular region scenes, existing move/interact input actions, and future dialogue, fishing, tools, mounts, and combat systems.
 
@@ -19,7 +19,7 @@ Already in `scenes/player/player.gd` / `player.tscn`:
 | Diagonal | Input vector normalized before applying speed |
 | Acceleration | Immediate full speed / stop (no ramp) |
 | Collision | `CharacterBody2D`; `collision_layer = 2` (player), `collision_mask = 1` (world) |
-| Region travel lock | Zero velocity while `RegionManager.is_busy()` |
+| Region travel lock | `RegionManager` acquires `&"region_transition"` on the player via the movement-lock API |
 | Facing | Horizontal `flip_h` only when `input_vector.x != 0` |
 | Feedback | Placeholder sprite bob while moving |
 
@@ -61,7 +61,7 @@ This ticket **does not** change that code. Implementation tickets must align the
 | Dialogue active | No |
 | Player in `INTERACTING` (short interaction hold) | No |
 | Cutscenes / scripted camera moments | No |
-| Region transition (`RegionManager` busy) | No |
+| Region transition (`region_transition` lock) | No |
 | Fishing minigame active | No |
 | Tool-use animation / active tool swing (post-M1 tools) | No |
 
@@ -167,7 +167,7 @@ When lock count == 0:
 
 ### Problem
 
-Today only `RegionManager.is_busy()` gates movement. Dialogue, menus, fishing, cutscenes, and tools will each need freezes. Independent booleans (`can_move = true` from one system) will incorrectly clear another system’s freeze.
+Previously only `RegionManager.is_busy()` gated movement. Dialogue, menus, fishing, cutscenes, and tools each need freezes. Independent booleans (`can_move = true` from one system) would incorrectly clear another system’s freeze.
 
 ### Coordination rule
 
@@ -187,7 +187,7 @@ Today only `RegionManager.is_busy()` gates movement. Dialogue, menus, fishing, c
 | `tool_use` | Tool swing / channel starts (mostly post-M1) | Animation / channel ends |
 | `scripted_event` | Blocking story/scripted beat | Beat completes |
 
-Region transitions should migrate from “player polls `RegionManager.is_busy()`” to **`RegionManager` acquiring `region_transition`** on the player (or a shared lock service the player reads). Either way, one lock set is the source of truth.
+Region transitions use **`RegionManager` acquiring `region_transition`** on the player. The player’s lock set is the source of truth for locomotion; `is_busy()` remains for transition orchestration and other non-movement consumers.
 
 ### Movement-lock API
 
@@ -321,7 +321,7 @@ Significant architectural addition (coordinated movement locks) is recorded as *
 Candidate tickets after this spec is approved (do not open from this doc ticket):
 
 1. Implement sprint input + multiplier on `player.gd` per this spec
-2. Implement movement-lock API and migrate `RegionManager` busy gating to a named lock
+2. ~~Implement movement-lock API and migrate `RegionManager` busy gating to a named lock~~ (done; ADR-007 Accepted)
 3. Expose animation contract getters; keep placeholder bob until art arrives
 4. Wire dialogue / menu / fishing systems to acquire/release locks when those features are built
 5. Basic NPC collision policy ticket (not part of movement implementation alone)
