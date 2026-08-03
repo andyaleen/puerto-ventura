@@ -1,8 +1,8 @@
 # Puerto Ventura
 
-A cozy 2D top-down island restoration life sim made in **Godot 4.7**.
+A 2D top-down island restoration life sim made in **Godot 4.7**.
 
-You inherit a beach cottage on a nearly abandoned paradise. Explore modular regions, gather resources, restore districts, reopen businesses, and uncover why the island fell silent.
+Restore a forgotten tropical island one district at a time. Rebuild businesses, uncover buried ruins, revive the local economy, and unravel ancient mysteries.
 
 ## Open in Godot
 
